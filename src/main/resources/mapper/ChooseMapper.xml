@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.hncj.selection.mapper.ChooseMapper">
+    <insert id="insert">
+   insert into choose values(#{snum},#{cnum})
+    </insert>
+    <select id="getAll" resultType="cn.hncj.selection.bean.Choose">
+        select * from choose
+    </select>
+    <select id="getBySNum" resultType="cn.hncj.selection.bean.Course">
+        SELECT c.*
+        FROM student s,course c
+        WHERE s.num = #{snum} AND c.`num` IN(SELECT cnum FROM choose WHERE snum = #{snum})
+    </select>
+    <select id="getBySNumPlus" resultType="cn.hncj.selection.bean.Course">
+        SELECT c.num,c.name,t.`name` teacher_name,c.score,c.`transcript`
+        FROM student s,course c,teacher t
+        WHERE s.num = #{snum} AND c.`num` IN(SELECT cnum FROM choose WHERE snum = #{snum})
+        AND t.`id`IN(
+        SELECT
+        teacher_id
+        FROM
+        choose
+        WHERE snum = #{snum}
+)
+    </select>
+</mapper>

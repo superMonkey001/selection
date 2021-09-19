@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>学生选课系统</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="/css/selection.css">
+    <script src="/js/jquery-1.12.4.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script>
+        $(function () {
+            $("#form-sub").click(function () {
+                /*num 	name 	teacher 	score 	transcript*/
+                var check = $("input[name='checkItem']:checked");
+                check.each(function () {
+                    var row = $(this).parent("td").parent("tr");
+                    var num = row.children("td[name='num']").text();
+                    var course_name = row.find("td[name='course_name']").text();
+                    var teacher_name = row.find("[name='teacher_name']").text();
+                    var score = row.find("[name='score']").text();
+                    var transcript = row.find("[name='transcript']").text();
+                    $.ajax(
+                        {
+                            url: "/choose",
+                            type: "post",
+                            contentType: 'application/json',
+                            data: JSON.stringify({
+                                num: num,
+                                name: course_name,
+                                score: score,
+                                transcript: transcript
+                            }),
+                            /*{"msg":"有课程你已经选过","code":406}*/
+                            success: function (data) {
+                                if(data.code==406)
+                                {
+                                    if(confirm(data.msg))
+                                    {
+                                        window.open("/choose")
+                                    }else{
+                                        location.reload()
+                                    }
+                                }else if (data.code==200){
+                                    location.href="/choose";
+                                }
+                            },
+                            datatype: "json"
+                        }
+                    );
+                });
+            })
+
+        });
+
+        function selectAll(obj) {
+            $("label input").prop("checked", obj.checked);
+        }
+    </script>
+</head>
+<body>
+<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <table class="selection-table table table-bordered">
+        <tr class="active">
+            <!--复选框-->
+            <th>
+                <label>
+                    <input id="firstCk" type="checkbox" onclick="selectAll(this)">
+                </label>
+            </th>
+            <th>num</th>
+            <th>name</th>
+            <th>teacher</th>
+            <th>score</th>
+            <th>transcript</th>
+        </tr>
+        <tr th:each="course,stat:${session.courses}">
+            <!--复选框-->
+            <td>
+                <input type="checkbox" name="checkItem">
+            </td>
+            <td name="num" th:text="${course.num}"></td>
+            <td name="course_name" th:text="${course.name}"></td>
+            <td name="teacher_name" th:text="${course.teacher.name}"></td>
+            <td name="score" th:text="${course.score}"></td>
+            <td name="transcript" th:text="${course.transcript}"></td>
+        </tr>
+        <tr>
+            <td colspan="6">
+                <input id="form-sub" class="pull-right" type="submit" value="选课">
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

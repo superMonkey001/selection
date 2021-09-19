@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.hncj.selection.mapper.StudentMapper">
+    <select id="getStudent" resultType="cn.hncj.selection.bean.Student">
+    select * from student where num = #{num} and password = #{password}
+  </select>
+</mapper>
