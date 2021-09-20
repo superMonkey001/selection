@@ -1,12 +1,11 @@
 package cn.hncj.selection.mapper;
 
-import cn.hncj.selection.bean.Course;
+import cn.hncj.selection.bean.Class;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
 @Mapper
-public interface CourseMapper {
-    List<Course> getAll();
-
+public interface ClassMapper {
+    List<Class> getAll();
 }

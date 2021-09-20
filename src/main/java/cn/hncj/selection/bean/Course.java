@@ -13,4 +13,6 @@ public class Course {
     private Integer transcript;
     private Teacher teacher;
     private String teacherName;
+    private Integer count;
+    private Student student;
 }

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.hncj.selection.mapper.ClassMapper">
+    <select id="getAll" resultType="cn.hncj.selection.bean.Class">
+        SELECT course.name course_name,class.*
+        FROM course
+        LEFT JOIN class
+        ON class_num = class.`num`
+    </select>
+</mapper>

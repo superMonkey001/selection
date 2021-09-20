@@ -10,51 +10,45 @@
     <script src="/js/bootstrap.min.js"></script>
     <script>
         $(function () {
+            $('[data-toggle="popover"]').popover()
+        })
+        $(function () {
             $("#form-sub").click(function () {
+                var courses = new Array();
                 /*num 	name 	teacher 	score 	transcript*/
                 var check = $("input[name='checkItem']:checked");
                 check.each(function () {
+                    var course = {};
                     var row = $(this).parent("td").parent("tr");
                     var num = row.children("td[name='num']").text();
                     var course_name = row.find("td[name='course_name']").text();
-                    var teacher_name = row.find("[name='teacher_name']").text();
                     var score = row.find("[name='score']").text();
                     var transcript = row.find("[name='transcript']").text();
-                    $.ajax(
-                        {
-                            url: "/choose",
-                            type: "post",
-                            contentType: 'application/json',
-                            data: JSON.stringify({
-                                num: num,
-                                name: course_name,
-                                score: score,
-                                transcript: transcript
-                            }),
-                            /*{"msg":"有课程你已经选过","code":406}*/
-                            success: function (data) {
-                                if(data.code==406)
-                                {
-                                    if(confirm(data.msg))
-                                    {
-                                        window.open("/choose")
-                                    }else{
-                                        location.reload()
-                                    }
-                                }else if (data.code==200){
-                                    location.href="/choose";
-                                }
-                            },
-                            datatype: "json"
-                        }
-                    );
+                    course['num']=num;
+                    course['name']=course_name;
+                    course['score']=score;
+                    course['transcript']=transcript;
+                    courses.push(course);
                 });
+                $.ajax(
+                    {
+                        url: "/choose",
+                        type: "delete",
+                        contentType: 'application/json',
+                        data: JSON.stringify(courses),
+                        success: function (data) {
+                            alert(data.msg)
+                            location.reload();
+                        },
+                        datatype: "json"
+                    }
+                );
             })
 
         });
 
         function selectAll(obj) {
-            $("label input").prop("checked", obj.checked);
+            $("td input").prop("checked", obj.checked);
         }
     </script>
 </head>
@@ -76,17 +70,27 @@
     <tr th:if="${chooses!=null}" th:each="choose:${chooses}">
         <!--复选框-->
         <td>
-            <input type="checkbox" name="checkItem">
+            <input type="checkbox" name="checkItem" autocomplete="off">
         </td>
         <td name="num" th:text="${choose.num}"></td>
         <td name="course_name" th:text="${choose.name}"></td>
-        <td name="teacher_name" th:text="${choose.teacherName}"></td>
+        <td name="teacher_name">
+            <button th:text="${choose.teacherName}" type="button" class="btn btn-default" data-container="body"
+                    data-toggle="popover" data-placement="right" data-content="返回上一级查看哦">
+                Popover on 右侧
+            </button>
+        </td>
         <td name="score" th:text="${choose.score}"></td>
         <td name="transcript" th:text="${choose.transcript}"></td>
     </tr>
     <tr>
         <td colspan="6">
-            <input id="form-sub" class="pull-right" type="submit" value="退课">
+            <form action="/selection">
+                <button class="returnBtn btn-success pull-left" type="submit"><span
+                        class="glyphicon glyphicon-hand-left"></span>返回选课列表
+                </button>
+            </form>
+            <input id="form-sub" class="pull-right" type="submit" value="DELETE">
         </td>
     </tr>
 </table>

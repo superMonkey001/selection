@@ -11,55 +11,106 @@
     <script>
         $(function () {
             $("#form-sub").click(function () {
+                var courses = new Array();
                 /*num 	name 	teacher 	score 	transcript*/
                 var check = $("input[name='checkItem']:checked");
                 check.each(function () {
+                    var course = {};
                     var row = $(this).parent("td").parent("tr");
                     var num = row.children("td[name='num']").text();
                     var course_name = row.find("td[name='course_name']").text();
-                    var teacher_name = row.find("[name='teacher_name']").text();
                     var score = row.find("[name='score']").text();
                     var transcript = row.find("[name='transcript']").text();
-                    $.ajax(
-                        {
-                            url: "/choose",
-                            type: "post",
-                            contentType: 'application/json',
-                            data: JSON.stringify({
-                                num: num,
-                                name: course_name,
-                                score: score,
-                                transcript: transcript
-                            }),
-                            /*{"msg":"有课程你已经选过","code":406}*/
-                            success: function (data) {
-                                if(data.code==406)
-                                {
-                                    if(confirm(data.msg))
-                                    {
-                                        window.open("/choose")
-                                    }else{
-                                        location.reload()
-                                    }
-                                }else if (data.code==200){
-                                    location.href="/choose";
-                                }
-                            },
-                            datatype: "json"
-                        }
-                    );
+                    course['num']=num;
+                    course['name']=course_name;
+                    course['score']=score;
+                    course['transcript']=transcript;
+                    courses.push(course);
                 });
+                $.ajax(
+                    {
+                        url: "/choose",
+                        type: "post",
+                        contentType: 'application/json',
+                        data: JSON.stringify(
+                            courses
+                        ),
+                        /*{"msg":"有课程你已经选过","code":406}*/
+                        success: function (data) {
+                            if (data.code == 406) {
+                                alert(data.msg)
+                            } else if (data.code == 200) {
+                                location.href = "/choose";
+                            }
+                        },
+                        datatype: "json"
+                    }
+                );
             })
 
+            $("[name='chooseCount']").click(function(){
+                $("#studentTable tr").remove("tr[name!=firstTr]");
+                $("#showStudent").modal({
+                    backdrop:true});
+                var row = $(this).parent("td").parent("tr");
+                var num = row.children("td[name='num']").text();
+                $.ajax({
+                    url:"/student?num="+num,
+                    type:"get",
+                    success:function(data){
+                        $.each(data,function(index,ele)
+                        {
+                            $("#studentTable").append($("<tr></tr>>").
+                            append("<td>"+ele.name+"</td><td>"+ele.affiliated+"</td>>"))
+                        })
+                    },
+                    datatype:"json"
+                })
+            })
+        });
+        $(function () {
+            $('[data-toggle="popover"]').popover();
+
+            $('.collapse').collapse({toggle:false});
         });
 
         function selectAll(obj) {
-            $("label input").prop("checked", obj.checked);
+            $("td input").prop("checked", obj.checked);
         }
     </script>
 </head>
 <body>
+<div class="collapse" id="collapseExample">
+    <div class="well" >
+        <div th:each="class:${session.classes}">
+            <span th:text="${'教室编号:'+class.num+'&emsp;&emsp;&emsp;&emsp;'}"></span>
+            <span th:text="${'课程名称:'+class.courseName+'&emsp;&emsp;&emsp;&emsp;'}"></span>
+            <span th:text="${'可容纳人数:'+class.capacity+'&emsp;&emsp;&emsp;&emsp;'}"></span>
+            <span th:text="${'空闲时间:'+class.freeTime}"></span>
+            <hr>
+        </div>
+    </div>
+</div>
+<div id="showStudent" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <table id="studentTable"class="table-bordered">
+                <tr name="firstTr">
+                    <th>name</th>
+                    <th>affiliated</th>
+                </tr>
+                <!--                <tr th:each="course,stat:${session.courses}">-->
+                <!--                    <td th:text="${course.student.name}"></td>-->
+                <!--                    <td th:text="${course.student.affiliated}"></td>-->
+                <!--                </tr>-->
+            </table>
+        </div>
+    </div>
+</div>
 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <a class="btn btn-primary pull-right" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+        查看教室信息
+    </a>
     <table class="selection-table table table-bordered">
         <tr class="active">
             <!--复选框-->
@@ -73,6 +124,7 @@
             <th>teacher</th>
             <th>score</th>
             <th>transcript</th>
+            <th>已选人数</th>
         </tr>
         <tr th:each="course,stat:${session.courses}">
             <!--复选框-->
@@ -81,12 +133,29 @@
             </td>
             <td name="num" th:text="${course.num}"></td>
             <td name="course_name" th:text="${course.name}"></td>
-            <td name="teacher_name" th:text="${course.teacher.name}"></td>
+            <td name="teacher_name">
+                <button th:text="${course.teacher.name}" type="button" class="btn btn-default" data-container="body"
+                        data-toggle="popover" data-placement="right"
+                        th:data-content="${'name:  '+course.teacher.name+'    gender:  '+course.teacher.gender+'    age:  '+course.teacher.age
+                        +'    education:  '+course.teacher.education+'    professional_title:  '+course.teacher.professionalTitle
+                        +'    university:  '+course.teacher.university+'    isHealth:  '+(course.teacher.isHealth==1?'健康':'欠佳')
+                        }">
+                    Popover on 右侧
+                </button>
+            </td>
             <td name="score" th:text="${course.score}"></td>
             <td name="transcript" th:text="${course.transcript}"></td>
+            <td name="count">
+                <button name="chooseCount" th:text="${course.count}" type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-sm">查看详情</button>
+            </td>
         </tr>
         <tr>
-            <td colspan="6">
+            <td colspan="7">
+                <form action="/choose">
+                    <button class="returnBtn btn-success pull-left" type="submit"><span
+                            class="glyphicon glyphicon-hand-right"></span>查看已选课程
+                    </button>
+                </form>
                 <input id="form-sub" class="pull-right" type="submit" value="选课">
             </td>
         </tr>

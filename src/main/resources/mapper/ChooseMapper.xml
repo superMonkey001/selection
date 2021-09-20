@@ -9,7 +9,7 @@
     <select id="getAll" resultType="cn.hncj.selection.bean.Choose">
         select * from choose
     </select>
-    <select id="getBySNum" resultType="cn.hncj.selection.bean.Course">
+    <select id="getCourseBySNum" resultType="cn.hncj.selection.bean.Course">
         SELECT c.*
         FROM student s,course c
         WHERE s.num = #{snum} AND c.`num` IN(SELECT cnum FROM choose WHERE snum = #{snum})
@@ -25,5 +25,16 @@
         choose
         WHERE snum = #{snum}
 )
+    </select>
+    <update id="deleteByNum">
+        delete from choose where cnum = #{cnum}
+    </update>
+    <select id="getCourseCountByCNum" resultType="integer">
+        select count(cnum) from choose where cnum = #{cnum}
+    </select>
+    <select id="getStudentByCNum" resultType="cn.hncj.selection.bean.Student">
+        SELECT s.name,s.affiliated
+        FROM course c,student s
+        WHERE c.`num`= #{cnum} AND s.`num` IN (SELECT snum FROM choose WHERE cnum = #{cnum})
     </select>
 </mapper>

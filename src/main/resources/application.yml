@@ -8,3 +8,7 @@ spring:
     url: jdbc:mysql:///selection
     username: root
     password: root
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true

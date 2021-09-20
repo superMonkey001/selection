@@ -19,7 +19,12 @@ body{
 }
 
 .selection-table{
-    background-color: white;
+    background-image: url("../images/default.jpg");
+    background-size: cover;
+    -webkit-background-size: cover;
+    -o-background-size: cover;
+    -moz-background-size: cover;
+    -ms-background-size: cover;
     width: 800px;
     margin: 0 auto;
     margin-top: 50px;
@@ -33,4 +38,17 @@ body{
     width: 50px;
     height: 30px;
     color: #8ac007;
+}
+.error{
+    color: #e34012;
+}
+#studentTable{
+    width: 300px;
+    cursor: pointer;
+    background-image: url("../images/default.jpg");
+    background-size: cover;
+    -webkit-background-size: cover;
+    -o-background-size: cover;
+    -moz-background-size: cover;
+    -ms-background-size: cover;
 }
