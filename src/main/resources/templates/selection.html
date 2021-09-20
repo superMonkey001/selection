@@ -136,10 +136,8 @@
             <td name="teacher_name">
                 <button th:text="${course.teacher.name}" type="button" class="btn btn-default" data-container="body"
                         data-toggle="popover" data-placement="right"
-                        th:data-content="${'name:  '+course.teacher.name+'    gender:  '+course.teacher.gender+'    age:  '+course.teacher.age
-                        +'    education:  '+course.teacher.education+'    professional_title:  '+course.teacher.professionalTitle
-                        +'    university:  '+course.teacher.university+'    isHealth:  '+(course.teacher.isHealth==1?'健康':'欠佳')
-                        }">
+                        th:data-content="${'名字:'+course.teacher.name+'&emsp;性别:'+course.teacher.gender+'&emsp;年龄:'+course.teacher.age+'&emsp;学历:'+course.teacher.education+'&emsp;职称:'+course.teacher.professionalTitle+'&emsp;毕业大学:'+course.teacher.university+'&emsp;状态:'+(course.teacher.isHealth==1?'健康':'欠佳')
+              }">
                     Popover on 右侧
                 </button>
             </td>
