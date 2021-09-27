@@ -21,7 +21,7 @@ public class WebConfig {
             @Override
             public void addInterceptors(InterceptorRegistry registry) {
                 registry.addInterceptor(loginIntercept).excludePathPatterns("/css/**","/js/**",
-                        "/fonts/**","/images/**","/","/login");
+                        "/fonts/**","/images/**","/","/login","/sendCode");
             }
         };
     }

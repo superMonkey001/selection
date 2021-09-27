@@ -14,9 +14,14 @@
         })
         $(function () {
             $("#form-sub").click(function () {
-                var courses = new Array();
                 /*num 	name 	teacher 	score 	transcript*/
                 var check = $("input[name='checkItem']:checked");
+                var length = $("input[name='checkItem']:checked").length;
+                if(length==0)
+                {   alert("不能空删");
+                    return;
+                }
+                var courses = new Array();
                 check.each(function () {
                     var course = {};
                     var row = $(this).parent("td").parent("tr");
