@@ -4,6 +4,7 @@ import cn.hncj.selection.bean.Choose;
 import cn.hncj.selection.bean.Course;
 import cn.hncj.selection.bean.Student;
 import cn.hncj.selection.bean.Teacher;
+import cn.hncj.selection.entites.CommonResult;
 import cn.hncj.selection.mapper.ChooseMapper;
 import cn.hncj.selection.mapper.CourseMapper;
 import cn.hncj.selection.mapper.StudentMapper;
@@ -74,19 +75,14 @@ public class ChooseController {
 
     @ResponseBody
     @DeleteMapping("/choose")
-    public Map choose(@RequestBody List<Course> courses) {
+    public CommonResult choose(@RequestBody List<Course> courses) {
         List<Choose> chooses = chooseMapper.getAll();
-        Map<String, Object> map = new HashMap<>();
         if (chooses.size() != 0 && chooses != null) {
             for (Course course : courses) {
                 chooseMapper.deleteByNum(course.getNum());
             }
-            map.put("msg", "删除成功");
-            map.put("code", 200);
-            return map;
+            return new CommonResult("删除成功",200);
         }
-        map.put("msg", "没有课啦");
-        map.put("code", 406);
-        return map;
+        return new CommonResult("没有课啦",406);
     }
 }
